@@ -22,3 +22,27 @@ class Residual(nn.Module):
             X = self.res_conv(X)
         Y += X
         return relu(Y)
+
+def resnet_block(in_channels, out_channels, num_residuals, first_block=False):
+    """
+    Generate a residual block.
+    """
+    blk = []
+    for i in range(num_residuals):
+        if i == 0 and not first_block:
+            blk.append(Residual(in_channels, out_channels, use_res_conv1=True, strides=2))
+        else:
+            blk.append(Residual(in_channels, out_channels))
+    return blk
+
+resnet = nn.Sequential(
+    nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3),
+    nn.BatchNorm2d(64), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+    *resnet_block(64, 64, 2, first_block=True),
+    *resnet_block(64, 128, 2),
+    *resnet_block(128, 256, 2),
+    *resnet_block(256, 512, 2),
+    nn.AdaptiveAvgPool2d((1, 1)),
+    nn.Flatten(), nn.Linear(512, 10)
+)
