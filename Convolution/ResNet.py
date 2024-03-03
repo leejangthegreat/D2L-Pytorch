@@ -32,7 +32,7 @@ def resnet_block(in_channels, out_channels, num_residuals, first_block=False):
         if i == 0 and not first_block:
             blk.append(Residual(in_channels, out_channels, use_res_conv1=True, strides=2))
         else:
-            blk.append(Residual(in_channels, out_channels))
+            blk.append(Residual(out_channels, out_channels))
     return blk
 
 resnet = nn.Sequential(
