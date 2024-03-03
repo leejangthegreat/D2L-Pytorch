@@ -46,3 +46,9 @@ resnet = nn.Sequential(
     nn.AdaptiveAvgPool2d((1, 1)),
     nn.Flatten(), nn.Linear(512, 10)
 )
+
+if __name__ == '__main__':
+    X = torch.rand(size=(1, 1, 224, 224))
+    for layer in resnet:
+        X = layer(X)
+        print(layer.__class__.__name__,'output shape:\t', X.shape)
